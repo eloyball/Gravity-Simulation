@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sketch</title>
+
+    <link rel="stylesheet" type="text/css" href="public/style/style.css">
+
+    <script src="https://kit.fontawesome.com/d65e90abab.js" crossorigin="anonymous"></script>
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="nav-left">
+        <i class="fa-regular fa-circle-question" onclick="toggleHelp()"></i>
+        <button class="body-slc-btn" id="pre-btn" onclick="displayPreset()">PRESETS</button>
+        <button class="body-slc-btn" id="adv-btn" onclick="displayAdvSet()">ADVANCED  <i class="fa-solid fa-caret-down"></i></button>
+      </div>
+      <div class="nav-center">
+        <div class="sml-wrapper">
+          <button id="stp-btn" onclick="stopSimulation()"><i class="fa-regular fa-stop-circle"></i> STOP</button>
+          <button id="sml-btn" onclick="beginSimulation()"><i class="fa-regular fa-play-circle"></i> SIMULATE</button>
+        </div>
+        <button id="rst-btn" onclick="reset()">CLEAR</button>
+      </div>
+      <div class="nav-right">
+        <h1>PLACE OBJECT:</h1>
+        <button class="body-slc-btn btn-selected" id="btn-planet" onclick="selectPlanet()">PLANET</button>
+        <button class="body-slc-btn" id="btn-star" onclick="selectStar()">STAR</button>
+        
+        <div class="burger" onclick="toggleControls()">
+          <div id="line-bottom"></div>
+          <div id="line-top"></div>
+        </div>
+        <i class="fa-solid fa-trash" onclick="deleteObject()"></i>
+      </div>
+    </div>
+
+    <div class="help-dlg">
+      <div class="hf"><p id="page-count">1/9</p><i class="fa-solid fa-xmark" id="close-help"  onclick="toggleHelp()"></i></div>
+      <div class="page " id="page-1">
+        <h4>Welcome to Gravity Simulation Tool!</h4>
+        <p>This tool makes use of real-world physics equations of gravity, force and motion to simulate how celestial objects move and interact with each other.</p>
+        <div class="welcome-anim">
+          <div class="object planet blue"></div>
+          <div class="object sun"></div>
+          <div class="object planet red"></div>
+        </div>
+      </div>
+      <div class="page hidden" id="page-2">
+        <h4>Placing Objects</h4>
+        <p>There are two types of objects, <b>Planets</b> and <b>Stars</b>. You can select the desired object on the top right.</p>
+        <img src="public/assets/help-place-1.gif" alt="Select Object">
+        <p>To place an object, simply click on the screen. Clicking on top of a pre-existing object will select it, allowing you to drag it across the canvas and/or change its attributes.</p>
+        <img src="public/assets/help-place-2.gif" alt="Place Object">
+        <p>Selected objects can be deleted by clicking on the trash icon. <i class="fa-solid fa-trash"></i></p>
+      </div>
+      <div class="page hidden" id="page-3">
+        <h4>Object Types - Planets</h4>
+        <p><b>Planets</b> are dynamic objects that can be fully customized. When simulating, they will move based on their individual attributes as well as the influence of other objects present in the scene. Their path can be previewed before starting the simulation and potential collisions are displayed accordingly.</p>
+        <div class="preview-line"></div>
+        <div class="planet-group">
+          <div class="object planet red"></div>
+          <div class="object planet red collided"></div>
+          <div class="object planet blue collided"></div>
+          <div class="object planet blue"></div>
+        </div>
+        <p>A planet's attributes can be controlled by a side menu located at the top right, next to "Place Object". It consist of:</p>
+        <p><b>Color</b>: Controls the color of the planet.</p>
+        <p><b>Mass</b>: Assigns a value for the planet's mass.</p>
+        <p><b>Radius</b>: Controls the radius, and thus overall size.</p>
+        <p><b>Initial Velocity X</b>: Assigns an initial velocity in the horizontal axis (positive values translate to right, negative translate to left).</p>
+        <p><b>Initial Velocity Y</b>: Assigns an initial velocity in the vertical axis (positive values translate to down, negative translate to up).</p>
+      </div>
+      <div class="page hidden" id="page-4">
+        <h4>Object Types - Stars</h4>
+        <div class="star-wrapper"><div class="object sun"></div></div>
+        <p><b>Stars</b> are static objects that can also be placed in the scene. Unliked planets, they do not move when simulating and their mass is already set to a large and immutable value by default.</p>
+      </div>
+      <div class="page hidden" id="page-5">
+        <h4>Understanding the Math (Optional)</h4>
+        <p>While not a necessity, understanding the equations behind the code can make it much easier to use this tool. The position of each planet is simply dictated by its velocity at any given time. Additionally, its velocity is influenced by the forces acting upon it.</p>
+        <img src="public/assets/equations.png" alt="Equations">
+        <p>The values of constants and variables are adjusted by default to provide a better experience and smoother visualization.</p>
+      </div>
+      <div class="page hidden" id="page-6">
+        <h4>Advanced Settings</h4>
+        <p>As previously mentioned, some settings were manually adjusted to allow the simulation to run adequately. However, these can be altered to your liking with a dropdown menu located at the top left. Nevertheless, it is not recommended changing the following values without comprehending their purpose.</p>
+        <p><b>Gravitational Constant</b>: Assigns the value of "G" for the "Force of Gravity" equation (even though the real-world value of this constant is very small, larger values usually wield better results).</p>
+        <p><b>Velocity Multiplier</b>: Adjusts the overall velocity of all planets.</p>
+        <p><b>Preview Iterations</b>: Dictates how further into the future the tool will be able preview the path for each planet. Decreasing this value is recommended you have many objects placed at the same time (Warning, on the other hand, setting this to a very high value can cause major issues such as crashing).</p>
+        <p><b>Stars Lighting</b>: Allows you to disable shadow and lighting effects when stars are present, improving performance.</p>
+      </div>
+      <div class="page hidden" id="page-7">
+        <h4>Simulating</h4>
+        <p>The buttons located at the top center are the main controls for the simulation.</p>
+        <div class="fake sml"><i class="fa-regular fa-play-circle"></i> SIMULATE</div>
+        <p><b>Simulate</b> will start the simulation and allow planets to move.</p>
+        <div class="fake stp"><i class="fa-regular fa-stop-circle"></i> STOP</div>
+        <p><b>Stop</b> will stop the simulation and return all objects to the state before the simulation began.</p>
+        <div class="fake rst">CLEAR</div>
+        <p><b>Clear</b> will delete all objects and reset the simulation.</p>
+      </div>
+      <div class="page hidden" id="page-8">
+        <h4>Presets</h4>
+        <p>Instead of creating your own system, you can also choose from a list of preset templates. These templates offer intriguing and amusing visualizations of solutions to the n-body problem.</p>
+        <p>To toggle <b>Presets</b>, click on the button located at the top left.</p>
+        <div class="fake pre">PRESETS</div>
+        <p> Warning, selecting an item from the list will clear the canvas and erase any previous alterations or currently placed objects.</p>
+      </div>
+      <div class="page hidden" id="page-9">
+        <h4>Most Importantly, Have Fun!</h4>
+        <p>Last but not least, enjoy messing with different settings and configurations. The best way to learn is by playing around :)</p>
+        <p>Challenge yourself to create new and essentric orbits while avoiding collisions or planets shooting off into the distance.</p>
+        <p>If you would like to take a look at the source code for this project, it can be found in my github.</p>
+      </div>
+      <div class="hf"><i class="fa-solid fa-circle-arrow-left hidden-arrow" id="help-prev" onclick="changePage(false)"></i><i class="fa-solid fa-circle-arrow-right" id="help-next" onclick="changePage(true)"></i></div>
+    </div>
+
+    <div class="adv-wrapper">
+      <div class="adv-settings adv-hidden">
+        <div>
+          <h3>Gravitational Constant: </h3>
+          <input type="text" class="inputBox" value="1.0" id="g-const" onkeypress="return isFloat(event)">
+        </div>
+        <div>
+          <h3>Velocity Multiplier: </h3>
+          <input type="text" class="inputBox" value="0.1" id="vel-mult" onkeypress="return isFloat(event)">
+        </div>
+        <div>
+          <h3>Preview Iterations: </h3>
+          <input type="text" class="inputBox" value="850" id="prev-it" onkeypress="return isPosNumber(event)">
+        </div>
+        <div>
+          <h3>Stars Lighting: </h3>
+          <select name="lighting" id="star-light">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="preset-dlg hidden">
+      <h1>CHOOSE A PRESET</h1>
+      <hr class="rounded">
+      <div class="preset-list"  id="preset-list"></div>
+    </div>
+
+    <div class="controls-wrapper">
+      <div class="controls">
+        <h2>Color:</h2>
+        <select name="color" id="color-select">
+          <option value="gray">Gray</option>
+          <option value="red">Red</option>
+          <option value="orange">Orange</option>
+          <option value="yellow">Yellow</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="purple">Purple</option>
+        </select>
+        <h2>Mass:</h2>
+        <div class="slider-container">
+          <input type="range" id="massSlider" min="1" max="1000" value="100">
+          <input type="text" class="inputBox" value="100" id="massInput" onkeypress="return isPosNumber(event)">
+        </div>
+        <h2>Radius:</h2>
+        <div class="slider-container">
+          <input type="range" id="radiusSlider" min="10" max="100" value="20">
+          <input type="text" class="inputBox" value="20" id="radiusInput" onkeypress="return isPosNumber(event)">
+        </div>
+        <h2>Initial Velocity X:</h2>
+        <div class="slider-container">
+          <input type="range" id="velXSlider" min="-100" max="100" value="0">
+          <input type="text" class="inputBox" value="0" id="velXInput" onkeypress="return isFloat(event)">
+        </div>
+        <h2>Initial Velocity Y:</h2>
+        <div class="slider-container">
+          <input type="range" id="velYSlider" min="-100" max="100" value="0">
+          <input type="text" class="inputBox" value="0" id="velYInput" onkeypress="return isFloat(event)">
+        </div>
+      </div>
+    </div>
+    
+    <script src="public/script/colors.js"></script>
+    <script src="public/script/presets.js"></script>
+    <script src="public/script/celestialBody.js"></script>
+    <script src="public/script/script.js"></script>
+    <script src="public/script/simulateBodies.js"></script>
+    <script src="public/script/sketch.js"></script>
+  </body>
+</html>
