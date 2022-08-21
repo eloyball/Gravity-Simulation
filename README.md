@@ -3,7 +3,8 @@ Welcome to Gravity Simulation Tool! This tool makes use of real-world physics eq
 You can access it here: https://eloyball.github.io/Gravity-Simulation/
 
 ## The Math Under The Hood
-The backbone of this application is the **equation of gravitational force** from **Newton's law of universal gravitation**.
+The backbone of this application is the **Equation of Gravitational Force** from **Newton's Law of Universal Gravitation**.
 ### F = GMm/R²
-With it, the tool can calculate the force acting upon each object and then converts that force into **acceleration**.
-This allows it to use the **equations of motion** to then calculate the position of each object at any given time with respect to one another.
+With it, the tool can calculate the force acting upon each object. By taking mass into consideration, it then converts **force** into **acceleration** using **Newton's Second Law of Motion**.
+### F = ma
+This allows the tool to calculate the position of each object at any given time with respect to one another. Since **Newton's Laws of Motion** dictate that **acceleration = (change of velocity)/time** and **velocity = position/time**.
