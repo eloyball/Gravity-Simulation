@@ -7,4 +7,4 @@ The backbone of this application is the **Equation of Gravitational Force** from
 ### F = GMm/R²
 With it, the tool can calculate the force acting upon each object and then convert **force** into **acceleration** using **Newton's Second Law of Motion**.
 ### F = ma
-This allows the tool to calculate the position of each object at any given time with respect to one another. Since **Newton's Laws of Motion** dictate that **acceleration = (change of velocity)/time** and **velocity = position/time**.
+This allows the tool to calculate the relative position of each object at any given time. Since **Newton's Laws of Motion** dictate that **acceleration = (change of velocity)/time** and **velocity = position/time**.
